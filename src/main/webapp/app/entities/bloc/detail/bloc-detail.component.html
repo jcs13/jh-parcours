@@ -1,0 +1,42 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="bloc">
+      <h2 data-cy="blocDetailsHeading"><span>Bloc</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>ID</span></dt>
+        <dd>
+          <span>{{ bloc.id }}</span>
+        </dd>
+        <dt><span>Name</span></dt>
+        <dd>
+          <span>{{ bloc.name }}</span>
+        </dd>
+        <dt><span>Component Id</span></dt>
+        <dd>
+          <span>{{ bloc.componentId }}</span>
+        </dd>
+        <dt><span>Etape</span></dt>
+        <dd>
+          <div *ngIf="bloc.etape">
+            <a [routerLink]="['/etape', bloc.etape?.id, 'view']">{{ bloc.etape?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/bloc', bloc.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
