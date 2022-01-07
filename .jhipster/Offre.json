@@ -1,0 +1,28 @@
+{
+  "name": "Offre",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "parcours",
+      "otherEntityRelationshipName": "offre",
+      "relationshipName": "parcours"
+    }
+  ],
+  "entityTableName": "offre",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20220107103205"
+}

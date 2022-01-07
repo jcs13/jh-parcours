@@ -1,0 +1,68 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-bloc-heading" data-cy="BlocCreateUpdateHeading">Create or edit a Bloc</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_name">Name</label>
+          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
+          <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('name')?.errors?.required"> This field is required. </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_componentId">Component Id</label>
+          <input
+            type="text"
+            class="form-control"
+            name="componentId"
+            id="field_componentId"
+            data-cy="componentId"
+            formControlName="componentId"
+          />
+          <div *ngIf="editForm.get('componentId')!.invalid && (editForm.get('componentId')!.dirty || editForm.get('componentId')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('componentId')?.errors?.required"> This field is required. </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_etape">Etape</label>
+          <select class="form-control" id="field_etape" data-cy="etape" name="etape" formControlName="etape">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="etapeOption.id === editForm.get('etape')!.value?.id ? editForm.get('etape')!.value : etapeOption"
+              *ngFor="let etapeOption of etapesSharedCollection; trackBy: trackEtapeById"
+            >
+              {{ etapeOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
