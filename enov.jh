@@ -1,0 +1,26 @@
+
+entity Parcours {
+	name String required
+}
+
+entity Offre {
+	name String required
+}
+
+entity Etape {
+	name String required
+}
+
+entity Bloc {
+	name String required
+    componentId String required
+}
+
+relationship OneToMany {
+	Etape to Bloc,
+	Parcours to Etape,
+	Parcours to Offre,
+    Parcours to Parcours{parent},
+}
+
+
