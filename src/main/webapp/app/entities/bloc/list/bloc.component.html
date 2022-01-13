@@ -32,9 +32,12 @@
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr>
-          <th scope="col"><span>ID</span></th>
+          <th scope="col"><span>Id</span></th>
           <th scope="col"><span>Name</span></th>
-          <th scope="col"><span>Component Id</span></th>
+          <th scope="col"><span>Label</span></th>
+          <th scope="col"><span>Element Name</span></th>
+          <th scope="col"><span>Element Path</span></th>
+          <th scope="col"><span>Display</span></th>
           <th scope="col"><span>Etape</span></th>
           <th scope="col"></th>
         </tr>
@@ -45,7 +48,10 @@
             <a [routerLink]="['/bloc', bloc.id, 'view']">{{ bloc.id }}</a>
           </td>
           <td>{{ bloc.name }}</td>
-          <td>{{ bloc.componentId }}</td>
+          <td>{{ bloc.label }}</td>
+          <td>{{ bloc.elementName }}</td>
+          <td>{{ bloc.elementPath }}</td>
+          <td>{{ bloc.display }}</td>
           <td>
             <div *ngIf="bloc.etape">
               <a [routerLink]="['/etape', bloc.etape?.id, 'view']">{{ bloc.etape?.id }}</a>

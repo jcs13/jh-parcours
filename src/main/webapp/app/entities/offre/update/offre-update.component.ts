@@ -3,12 +3,10 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 import { IOffre, Offre } from '../offre.model';
 import { OffreService } from '../service/offre.service';
-import { IParcours } from 'app/entities/parcours/parcours.model';
-import { ParcoursService } from 'app/entities/parcours/service/parcours.service';
 
 @Component({
   selector: 'jhi-offre-update',
@@ -17,26 +15,17 @@ import { ParcoursService } from 'app/entities/parcours/service/parcours.service'
 export class OffreUpdateComponent implements OnInit {
   isSaving = false;
 
-  parcoursSharedCollection: IParcours[] = [];
-
   editForm = this.fb.group({
-    id: [],
+    id: [null, [Validators.required]],
     name: [null, [Validators.required]],
-    parcours: [],
+    label: [null, [Validators.required]],
   });
 
-  constructor(
-    protected offreService: OffreService,
-    protected parcoursService: ParcoursService,
-    protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder
-  ) {}
+  constructor(protected offreService: OffreService, protected activatedRoute: ActivatedRoute, protected fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ offre }) => {
       this.updateForm(offre);
-
-      this.loadRelationshipsOptions();
     });
   }
 
@@ -52,10 +41,6 @@ export class OffreUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.offreService.create(offre));
     }
-  }
-
-  trackParcoursById(index: number, item: IParcours): number {
-    return item.id!;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IOffre>>): void {
@@ -81,22 +66,8 @@ export class OffreUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: offre.id,
       name: offre.name,
-      parcours: offre.parcours,
+      label: offre.label,
     });
-
-    this.parcoursSharedCollection = this.parcoursService.addParcoursToCollectionIfMissing(this.parcoursSharedCollection, offre.parcours);
-  }
-
-  protected loadRelationshipsOptions(): void {
-    this.parcoursService
-      .query()
-      .pipe(map((res: HttpResponse<IParcours[]>) => res.body ?? []))
-      .pipe(
-        map((parcours: IParcours[]) =>
-          this.parcoursService.addParcoursToCollectionIfMissing(parcours, this.editForm.get('parcours')!.value)
-        )
-      )
-      .subscribe((parcours: IParcours[]) => (this.parcoursSharedCollection = parcours));
   }
 
   protected createFromForm(): IOffre {
@@ -104,7 +75,7 @@ export class OffreUpdateComponent implements OnInit {
       ...new Offre(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
-      parcours: this.editForm.get(['parcours'])!.value,
+      label: this.editForm.get(['label'])!.value,
     };
   }
 }

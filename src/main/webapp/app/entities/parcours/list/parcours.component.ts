@@ -34,7 +34,7 @@ export class ParcoursComponent implements OnInit {
     this.loadAll();
   }
 
-  trackId(index: number, item: IParcours): number {
+  trackId(index: number, item: IParcours): string {
     return item.id!;
   }
 

@@ -14,7 +14,7 @@ describe('Offre Management Detail Component', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: { data: of({ offre: { id: 123 } }) },
+          useValue: { data: of({ offre: { id: 'ABC' } }) },
         },
       ],
     })
@@ -30,7 +30,7 @@ describe('Offre Management Detail Component', () => {
       comp.ngOnInit();
 
       // THEN
-      expect(comp.offre).toEqual(expect.objectContaining({ id: 123 }));
+      expect(comp.offre).toEqual(expect.objectContaining({ id: 'ABC' }));
     });
   });
 });

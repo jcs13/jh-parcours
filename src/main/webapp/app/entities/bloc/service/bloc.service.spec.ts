@@ -20,9 +20,12 @@ describe('Bloc Service', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     elemDefault = {
-      id: 0,
+      id: 'AAAAAAA',
       name: 'AAAAAAA',
-      componentId: 'AAAAAAA',
+      label: 'AAAAAAA',
+      elementName: 'AAAAAAA',
+      elementPath: 'AAAAAAA',
+      display: false,
     };
   });
 
@@ -30,7 +33,7 @@ describe('Bloc Service', () => {
     it('should find an element', () => {
       const returnedFromService = Object.assign({}, elemDefault);
 
-      service.find(123).subscribe(resp => (expectedResult = resp.body));
+      service.find('ABC').subscribe(resp => (expectedResult = resp.body));
 
       const req = httpMock.expectOne({ method: 'GET' });
       req.flush(returnedFromService);
@@ -40,7 +43,7 @@ describe('Bloc Service', () => {
     it('should create a Bloc', () => {
       const returnedFromService = Object.assign(
         {
-          id: 0,
+          id: 'ID',
         },
         elemDefault
       );
@@ -57,9 +60,12 @@ describe('Bloc Service', () => {
     it('should update a Bloc', () => {
       const returnedFromService = Object.assign(
         {
-          id: 1,
+          id: 'BBBBBB',
           name: 'BBBBBB',
-          componentId: 'BBBBBB',
+          label: 'BBBBBB',
+          elementName: 'BBBBBB',
+          elementPath: 'BBBBBB',
+          display: true,
         },
         elemDefault
       );
@@ -76,7 +82,9 @@ describe('Bloc Service', () => {
     it('should partial update a Bloc', () => {
       const patchObject = Object.assign(
         {
-          componentId: 'BBBBBB',
+          label: 'BBBBBB',
+          elementName: 'BBBBBB',
+          elementPath: 'BBBBBB',
         },
         new Bloc()
       );
@@ -95,9 +103,12 @@ describe('Bloc Service', () => {
     it('should return a list of Bloc', () => {
       const returnedFromService = Object.assign(
         {
-          id: 1,
+          id: 'BBBBBB',
           name: 'BBBBBB',
-          componentId: 'BBBBBB',
+          label: 'BBBBBB',
+          elementName: 'BBBBBB',
+          elementPath: 'BBBBBB',
+          display: true,
         },
         elemDefault
       );
@@ -113,7 +124,7 @@ describe('Bloc Service', () => {
     });
 
     it('should delete a Bloc', () => {
-      service.delete(123).subscribe(resp => (expectedResult = resp.ok));
+      service.delete('ABC').subscribe(resp => (expectedResult = resp.ok));
 
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
@@ -122,42 +133,42 @@ describe('Bloc Service', () => {
 
     describe('addBlocToCollectionIfMissing', () => {
       it('should add a Bloc to an empty array', () => {
-        const bloc: IBloc = { id: 123 };
+        const bloc: IBloc = { id: 'ABC' };
         expectedResult = service.addBlocToCollectionIfMissing([], bloc);
         expect(expectedResult).toHaveLength(1);
         expect(expectedResult).toContain(bloc);
       });
 
       it('should not add a Bloc to an array that contains it', () => {
-        const bloc: IBloc = { id: 123 };
+        const bloc: IBloc = { id: 'ABC' };
         const blocCollection: IBloc[] = [
           {
             ...bloc,
           },
-          { id: 456 },
+          { id: 'CBA' },
         ];
         expectedResult = service.addBlocToCollectionIfMissing(blocCollection, bloc);
         expect(expectedResult).toHaveLength(2);
       });
 
       it("should add a Bloc to an array that doesn't contain it", () => {
-        const bloc: IBloc = { id: 123 };
-        const blocCollection: IBloc[] = [{ id: 456 }];
+        const bloc: IBloc = { id: 'ABC' };
+        const blocCollection: IBloc[] = [{ id: 'CBA' }];
         expectedResult = service.addBlocToCollectionIfMissing(blocCollection, bloc);
         expect(expectedResult).toHaveLength(2);
         expect(expectedResult).toContain(bloc);
       });
 
       it('should add only unique Bloc to an array', () => {
-        const blocArray: IBloc[] = [{ id: 123 }, { id: 456 }, { id: 79321 }];
-        const blocCollection: IBloc[] = [{ id: 123 }];
+        const blocArray: IBloc[] = [{ id: 'ABC' }, { id: 'CBA' }, { id: 'f41b3eff-f28f-482b-94a7-feb211f3750a' }];
+        const blocCollection: IBloc[] = [{ id: 'ABC' }];
         expectedResult = service.addBlocToCollectionIfMissing(blocCollection, ...blocArray);
         expect(expectedResult).toHaveLength(3);
       });
 
       it('should accept varargs', () => {
-        const bloc: IBloc = { id: 123 };
-        const bloc2: IBloc = { id: 456 };
+        const bloc: IBloc = { id: 'ABC' };
+        const bloc2: IBloc = { id: 'CBA' };
         expectedResult = service.addBlocToCollectionIfMissing([], bloc, bloc2);
         expect(expectedResult).toHaveLength(2);
         expect(expectedResult).toContain(bloc);
@@ -165,14 +176,14 @@ describe('Bloc Service', () => {
       });
 
       it('should accept null and undefined values', () => {
-        const bloc: IBloc = { id: 123 };
+        const bloc: IBloc = { id: 'ABC' };
         expectedResult = service.addBlocToCollectionIfMissing([], null, bloc, undefined);
         expect(expectedResult).toHaveLength(1);
         expect(expectedResult).toContain(bloc);
       });
 
       it('should return initial array if no Bloc is added', () => {
-        const blocCollection: IBloc[] = [{ id: 123 }];
+        const blocCollection: IBloc[] = [{ id: 'ABC' }];
         expectedResult = service.addBlocToCollectionIfMissing(blocCollection, undefined, null);
         expect(expectedResult).toEqual(blocCollection);
       });

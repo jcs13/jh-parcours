@@ -1,0 +1,50 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="blocOrder">
+      <h2 data-cy="blocOrderDetailsHeading"><span>Bloc Order</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>ID</span></dt>
+        <dd>
+          <span>{{ blocOrder.id }}</span>
+        </dd>
+        <dt><span>Start</span></dt>
+        <dd>
+          <span>{{ blocOrder.start }}</span>
+        </dd>
+        <dt><span>Etape Definition</span></dt>
+        <dd>
+          <div *ngIf="blocOrder.etapeDefinition">
+            <a [routerLink]="['/etape-definition', blocOrder.etapeDefinition?.id, 'view']">{{ blocOrder.etapeDefinition?.id }}</a>
+          </div>
+        </dd>
+        <dt><span>Current</span></dt>
+        <dd>
+          <div *ngIf="blocOrder.current">
+            <a [routerLink]="['/bloc-definition', blocOrder.current?.id, 'view']">{{ blocOrder.current?.id }}</a>
+          </div>
+        </dd>
+        <dt><span>Next</span></dt>
+        <dd>
+          <div *ngIf="blocOrder.next">
+            <a [routerLink]="['/bloc-definition', blocOrder.next?.id, 'view']">{{ blocOrder.next?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/bloc-order', blocOrder.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

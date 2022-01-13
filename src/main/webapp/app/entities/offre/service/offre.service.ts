@@ -21,14 +21,14 @@ export class OffreService {
   }
 
   update(offre: IOffre): Observable<EntityResponseType> {
-    return this.http.put<IOffre>(`${this.resourceUrl}/${getOffreIdentifier(offre) as number}`, offre, { observe: 'response' });
+    return this.http.put<IOffre>(`${this.resourceUrl}/${getOffreIdentifier(offre) as string}`, offre, { observe: 'response' });
   }
 
   partialUpdate(offre: IOffre): Observable<EntityResponseType> {
-    return this.http.patch<IOffre>(`${this.resourceUrl}/${getOffreIdentifier(offre) as number}`, offre, { observe: 'response' });
+    return this.http.patch<IOffre>(`${this.resourceUrl}/${getOffreIdentifier(offre) as string}`, offre, { observe: 'response' });
   }
 
-  find(id: number): Observable<EntityResponseType> {
+  find(id: string): Observable<EntityResponseType> {
     return this.http.get<IOffre>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
@@ -37,7 +37,7 @@ export class OffreService {
     return this.http.get<IOffre[]>(this.resourceUrl, { params: options, observe: 'response' });
   }
 
-  delete(id: number): Observable<HttpResponse<{}>> {
+  delete(id: string): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 

@@ -19,15 +19,22 @@ public class Etape implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private String id;
 
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
+
+    @NotNull
+    @Column(name = "label", nullable = false)
+    private String label;
+
+    @NotNull
+    @Column(name = "display", nullable = false)
+    private Boolean display;
 
     @OneToMany(mappedBy = "etape")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -35,21 +42,21 @@ public class Etape implements Serializable {
     private Set<Bloc> blocs = new HashSet<>();
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "etapes", "offres", "parcours", "parent" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "etapes" }, allowSetters = true)
     private Parcours parcours;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public String getId() {
         return this.id;
     }
 
-    public Etape id(Long id) {
+    public Etape id(String id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -64,6 +71,32 @@ public class Etape implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public Etape label(String label) {
+        this.setLabel(label);
+        return this;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Boolean getDisplay() {
+        return this.display;
+    }
+
+    public Etape display(Boolean display) {
+        this.setDisplay(display);
+        return this;
+    }
+
+    public void setDisplay(Boolean display) {
+        this.display = display;
     }
 
     public Set<Bloc> getBlocs() {
@@ -135,6 +168,8 @@ public class Etape implements Serializable {
         return "Etape{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", label='" + getLabel() + "'" +
+            ", display='" + getDisplay() + "'" +
             "}";
     }
 }

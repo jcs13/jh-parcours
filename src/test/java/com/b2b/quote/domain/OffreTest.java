@@ -11,11 +11,11 @@ class OffreTest {
     void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Offre.class);
         Offre offre1 = new Offre();
-        offre1.setId(1L);
+        offre1.setId("id1");
         Offre offre2 = new Offre();
         offre2.setId(offre1.getId());
         assertThat(offre1).isEqualTo(offre2);
-        offre2.setId(2L);
+        offre2.setId("id2");
         assertThat(offre1).isNotEqualTo(offre2);
         offre1.setId(null);
         assertThat(offre1).isNotEqualTo(offre2);

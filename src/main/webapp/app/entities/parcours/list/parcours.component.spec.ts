@@ -28,7 +28,7 @@ describe('Parcours Management Component', () => {
     jest.spyOn(service, 'query').mockReturnValue(
       of(
         new HttpResponse({
-          body: [{ id: 123 }],
+          body: [{ id: 'ABC' }],
           headers,
         })
       )
@@ -41,6 +41,6 @@ describe('Parcours Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.parcours?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    expect(comp.parcours?.[0]).toEqual(expect.objectContaining({ id: 'ABC' }));
   });
 });

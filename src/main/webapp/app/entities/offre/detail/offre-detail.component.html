@@ -10,7 +10,7 @@
       <jhi-alert></jhi-alert>
 
       <dl class="row-md jh-entity-details">
-        <dt><span>ID</span></dt>
+        <dt><span>Id</span></dt>
         <dd>
           <span>{{ offre.id }}</span>
         </dd>
@@ -18,11 +18,9 @@
         <dd>
           <span>{{ offre.name }}</span>
         </dd>
-        <dt><span>Parcours</span></dt>
+        <dt><span>Label</span></dt>
         <dd>
-          <div *ngIf="offre.parcours">
-            <a [routerLink]="['/parcours', offre.parcours?.id, 'view']">{{ offre.parcours?.id }}</a>
-          </div>
+          <span>{{ offre.label }}</span>
         </dd>
       </dl>
 

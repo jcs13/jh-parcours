@@ -47,11 +47,11 @@ describe('Bloc Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should call Etape query and add missing value', () => {
-      const bloc: IBloc = { id: 456 };
-      const etape: IEtape = { id: 97559 };
+      const bloc: IBloc = { id: 'CBA' };
+      const etape: IEtape = { id: 'f0baa60c-c5c1-4fec-862b-9799776838c2' };
       bloc.etape = etape;
 
-      const etapeCollection: IEtape[] = [{ id: 5709 }];
+      const etapeCollection: IEtape[] = [{ id: 'f7c9b3f8-202d-40b0-8f69-c64b5471db97' }];
       jest.spyOn(etapeService, 'query').mockReturnValue(of(new HttpResponse({ body: etapeCollection })));
       const additionalEtapes = [etape];
       const expectedCollection: IEtape[] = [...additionalEtapes, ...etapeCollection];
@@ -66,8 +66,8 @@ describe('Bloc Management Update Component', () => {
     });
 
     it('Should update editForm', () => {
-      const bloc: IBloc = { id: 456 };
-      const etape: IEtape = { id: 74369 };
+      const bloc: IBloc = { id: 'CBA' };
+      const etape: IEtape = { id: '9716801b-87fe-4208-ba75-2ec6b0f02a21' };
       bloc.etape = etape;
 
       activatedRoute.data = of({ bloc });
@@ -82,7 +82,7 @@ describe('Bloc Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<Bloc>>();
-      const bloc = { id: 123 };
+      const bloc = { id: 'ABC' };
       jest.spyOn(blocService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ bloc });
@@ -124,7 +124,7 @@ describe('Bloc Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<Bloc>>();
-      const bloc = { id: 123 };
+      const bloc = { id: 'ABC' };
       jest.spyOn(blocService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ bloc });
@@ -145,7 +145,7 @@ describe('Bloc Management Update Component', () => {
   describe('Tracking relationships identifiers', () => {
     describe('trackEtapeById', () => {
       it('Should return tracked Etape primary key', () => {
-        const entity = { id: 123 };
+        const entity = { id: 'ABC' };
         const trackResult = comp.trackEtapeById(0, entity);
         expect(trackResult).toEqual(entity.id);
       });

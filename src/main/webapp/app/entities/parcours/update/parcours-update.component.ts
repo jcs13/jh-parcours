@@ -3,7 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 import { IParcours, Parcours } from '../parcours.model';
 import { ParcoursService } from '../service/parcours.service';
@@ -15,12 +15,11 @@ import { ParcoursService } from '../service/parcours.service';
 export class ParcoursUpdateComponent implements OnInit {
   isSaving = false;
 
-  parcoursSharedCollection: IParcours[] = [];
-
   editForm = this.fb.group({
-    id: [],
+    id: [null, [Validators.required]],
     name: [null, [Validators.required]],
-    parent: [],
+    label: [null, [Validators.required]],
+    offreId: [null, [Validators.required]],
   });
 
   constructor(protected parcoursService: ParcoursService, protected activatedRoute: ActivatedRoute, protected fb: FormBuilder) {}
@@ -28,8 +27,6 @@ export class ParcoursUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ parcours }) => {
       this.updateForm(parcours);
-
-      this.loadRelationshipsOptions();
     });
   }
 
@@ -45,10 +42,6 @@ export class ParcoursUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.parcoursService.create(parcours));
     }
-  }
-
-  trackParcoursById(index: number, item: IParcours): number {
-    return item.id!;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IParcours>>): void {
@@ -74,20 +67,9 @@ export class ParcoursUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: parcours.id,
       name: parcours.name,
-      parent: parcours.parent,
+      label: parcours.label,
+      offreId: parcours.offreId,
     });
-
-    this.parcoursSharedCollection = this.parcoursService.addParcoursToCollectionIfMissing(this.parcoursSharedCollection, parcours.parent);
-  }
-
-  protected loadRelationshipsOptions(): void {
-    this.parcoursService
-      .query()
-      .pipe(map((res: HttpResponse<IParcours[]>) => res.body ?? []))
-      .pipe(
-        map((parcours: IParcours[]) => this.parcoursService.addParcoursToCollectionIfMissing(parcours, this.editForm.get('parent')!.value))
-      )
-      .subscribe((parcours: IParcours[]) => (this.parcoursSharedCollection = parcours));
   }
 
   protected createFromForm(): IParcours {
@@ -95,7 +77,8 @@ export class ParcoursUpdateComponent implements OnInit {
       ...new Parcours(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
-      parent: this.editForm.get(['parent'])!.value,
+      label: this.editForm.get(['label'])!.value,
+      offreId: this.editForm.get(['offreId'])!.value,
     };
   }
 }

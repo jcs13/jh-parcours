@@ -1,0 +1,42 @@
+{
+  "name": "BlocOrder",
+  "fields": [
+    {
+      "fieldName": "start",
+      "fieldType": "Boolean"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "etapeDefinition",
+      "otherEntityRelationshipName": "blocOrder",
+      "relationshipName": "etapeDefinition",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "blocDefinition",
+      "otherEntityRelationshipName": "blocOrder",
+      "relationshipName": "current",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "blocDefinition",
+      "otherEntityRelationshipName": "blocOrder",
+      "relationshipName": "next",
+      "ownerSide": true
+    }
+  ],
+  "entityTableName": "bloc_order",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20220113175151"
+}

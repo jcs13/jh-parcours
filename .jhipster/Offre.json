@@ -2,19 +2,22 @@
   "name": "Offre",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
       "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "label",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     }
   ],
-  "relationships": [
-    {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "parcours",
-      "otherEntityRelationshipName": "offre",
-      "relationshipName": "parcours"
-    }
-  ],
+  "relationships": [],
   "entityTableName": "offre",
   "dto": "no",
   "pagination": "no",

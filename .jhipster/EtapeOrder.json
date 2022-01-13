@@ -1,0 +1,42 @@
+{
+  "name": "EtapeOrder",
+  "fields": [
+    {
+      "fieldName": "start",
+      "fieldType": "Boolean"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "parcoursDefinition",
+      "otherEntityRelationshipName": "etapeOrder",
+      "relationshipName": "parcoursDefinition",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "etapeDefinition",
+      "otherEntityRelationshipName": "etapeOrder",
+      "relationshipName": "current",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "etapeDefinition",
+      "otherEntityRelationshipName": "etapeOrder",
+      "relationshipName": "next",
+      "ownerSide": true
+    }
+  ],
+  "entityTableName": "etape_order",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20220113175148"
+}

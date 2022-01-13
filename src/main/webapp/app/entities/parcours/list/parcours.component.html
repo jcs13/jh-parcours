@@ -32,9 +32,10 @@
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr>
-          <th scope="col"><span>ID</span></th>
+          <th scope="col"><span>Id</span></th>
           <th scope="col"><span>Name</span></th>
-          <th scope="col"><span>Parent</span></th>
+          <th scope="col"><span>Label</span></th>
+          <th scope="col"><span>Offre Id</span></th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -44,11 +45,8 @@
             <a [routerLink]="['/parcours', parcours.id, 'view']">{{ parcours.id }}</a>
           </td>
           <td>{{ parcours.name }}</td>
-          <td>
-            <div *ngIf="parcours.parent">
-              <a [routerLink]="['/parcours', parcours.parent?.id, 'view']">{{ parcours.parent?.id }}</a>
-            </div>
-          </td>
+          <td>{{ parcours.label }}</td>
+          <td>{{ parcours.offreId }}</td>
           <td class="text-right">
             <div class="btn-group">
               <button

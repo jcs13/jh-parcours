@@ -17,19 +17,30 @@ public class Bloc implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private String id;
 
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
 
     @NotNull
-    @Column(name = "component_id", nullable = false)
-    private String componentId;
+    @Column(name = "label", nullable = false)
+    private String label;
+
+    @NotNull
+    @Column(name = "element_name", nullable = false)
+    private String elementName;
+
+    @NotNull
+    @Column(name = "element_path", nullable = false)
+    private String elementPath;
+
+    @NotNull
+    @Column(name = "display", nullable = false)
+    private Boolean display;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "blocs", "parcours" }, allowSetters = true)
@@ -37,16 +48,16 @@ public class Bloc implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public String getId() {
         return this.id;
     }
 
-    public Bloc id(Long id) {
+    public Bloc id(String id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -63,17 +74,56 @@ public class Bloc implements Serializable {
         this.name = name;
     }
 
-    public String getComponentId() {
-        return this.componentId;
+    public String getLabel() {
+        return this.label;
     }
 
-    public Bloc componentId(String componentId) {
-        this.setComponentId(componentId);
+    public Bloc label(String label) {
+        this.setLabel(label);
         return this;
     }
 
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getElementName() {
+        return this.elementName;
+    }
+
+    public Bloc elementName(String elementName) {
+        this.setElementName(elementName);
+        return this;
+    }
+
+    public void setElementName(String elementName) {
+        this.elementName = elementName;
+    }
+
+    public String getElementPath() {
+        return this.elementPath;
+    }
+
+    public Bloc elementPath(String elementPath) {
+        this.setElementPath(elementPath);
+        return this;
+    }
+
+    public void setElementPath(String elementPath) {
+        this.elementPath = elementPath;
+    }
+
+    public Boolean getDisplay() {
+        return this.display;
+    }
+
+    public Bloc display(Boolean display) {
+        this.setDisplay(display);
+        return this;
+    }
+
+    public void setDisplay(Boolean display) {
+        this.display = display;
     }
 
     public Etape getEtape() {
@@ -114,7 +164,10 @@ public class Bloc implements Serializable {
         return "Bloc{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", componentId='" + getComponentId() + "'" +
+            ", label='" + getLabel() + "'" +
+            ", elementName='" + getElementName() + "'" +
+            ", elementPath='" + getElementPath() + "'" +
+            ", display='" + getDisplay() + "'" +
             "}";
     }
 }
