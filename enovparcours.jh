@@ -1,0 +1,91 @@
+
+entity Parcours {
+	id String required
+    name String required
+    label String required
+    offreId String required
+}
+
+entity Offre {
+	id String required
+    name String required
+    label String required
+}
+
+entity Etape {
+	id String required
+    name String required
+    label String required
+    display Boolean required
+}
+
+entity Bloc {
+	id String required
+    name String required
+    label String required
+    elementName String required
+    elementPath String required
+	display Boolean required
+}
+
+relationship OneToMany {
+	Etape to Bloc,
+	Parcours to Etape,
+}
+
+
+entity BusinessUnit {
+	id String required
+    code String required
+    name String required
+    label String required
+}
+
+entity Offre {
+	id String required
+    name String required
+    label String required
+}
+
+entity OffreParcoursComposition {
+    start Boolean
+}
+
+relationship OneToOne {
+	OffreParcoursComposition{offre} to Offre
+	OffreParcoursComposition{parcoursParent} to ParcoursDefinition
+	OffreParcoursComposition{parcoursChild} to ParcoursDefinition
+}
+
+entity ParcoursDefinition {
+	id String required
+    name String required
+    label String required
+}
+
+entity EtapeDefinition {
+	id String required
+    name String required
+    label String required
+}
+
+entity BlocDefinition {
+	id String required
+    name String required
+    label String required
+}
+
+entity Element {
+	id String required
+    name String required
+    path String required
+}
+
+relationship OneToMany {
+	EtapeDefinition to BlocDefinition,
+	ParcoursDefinition to EtapeDefinition,
+}
+
+relationship OneToOne {
+	BlocDefinition to Element
+}
