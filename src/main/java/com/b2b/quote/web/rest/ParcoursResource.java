@@ -56,7 +56,7 @@ public class ParcoursResource {
         Parcours result = parcoursRepository.save(parcours);
         return ResponseEntity
             .created(new URI("/api/parcours/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
     }
 
@@ -72,7 +72,7 @@ public class ParcoursResource {
      */
     @PutMapping("/parcours/{id}")
     public ResponseEntity<Parcours> updateParcours(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody Parcours parcours
     ) throws URISyntaxException {
         log.debug("REST request to update Parcours : {}, {}", id, parcours);
@@ -90,7 +90,7 @@ public class ParcoursResource {
         Parcours result = parcoursRepository.save(parcours);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, parcours.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, parcours.getId()))
             .body(result);
     }
 
@@ -107,7 +107,7 @@ public class ParcoursResource {
      */
     @PatchMapping(value = "/parcours/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Parcours> partialUpdateParcours(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody Parcours parcours
     ) throws URISyntaxException {
         log.debug("REST request to partial update Parcours partially : {}, {}", id, parcours);
@@ -128,6 +128,12 @@ public class ParcoursResource {
                 if (parcours.getName() != null) {
                     existingParcours.setName(parcours.getName());
                 }
+                if (parcours.getLabel() != null) {
+                    existingParcours.setLabel(parcours.getLabel());
+                }
+                if (parcours.getOffreId() != null) {
+                    existingParcours.setOffreId(parcours.getOffreId());
+                }
 
                 return existingParcours;
             })
@@ -135,7 +141,7 @@ public class ParcoursResource {
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, parcours.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, parcours.getId())
         );
     }
 
@@ -157,7 +163,7 @@ public class ParcoursResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the parcours, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/parcours/{id}")
-    public ResponseEntity<Parcours> getParcours(@PathVariable Long id) {
+    public ResponseEntity<Parcours> getParcours(@PathVariable String id) {
         log.debug("REST request to get Parcours : {}", id);
         Optional<Parcours> parcours = parcoursRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(parcours);
@@ -170,12 +176,9 @@ public class ParcoursResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/parcours/{id}")
-    public ResponseEntity<Void> deleteParcours(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteParcours(@PathVariable String id) {
         log.debug("REST request to delete Parcours : {}", id);
         parcoursRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-            .build();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id)).build();
     }
 }

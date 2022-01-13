@@ -6,9 +6,20 @@
       <div>
         <jhi-alert-error></jhi-alert-error>
 
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        <div class="form-group">
+          <label class="form-control-label" for="field_id">Id</label>
+          <input
+            type="text"
+            class="form-control"
+            name="id"
+            id="field_id"
+            data-cy="id"
+            formControlName="id"
+            [readonly]="editForm.get('id')!.value != null"
+          />
+          <div *ngIf="editForm.get('id')!.invalid && (editForm.get('id')!.dirty || editForm.get('id')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('id')?.errors?.required"> This field is required. </small>
+          </div>
         </div>
 
         <div class="form-group">
@@ -20,16 +31,11 @@
         </div>
 
         <div class="form-group">
-          <label class="form-control-label" for="field_parcours">Parcours</label>
-          <select class="form-control" id="field_parcours" data-cy="parcours" name="parcours" formControlName="parcours">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="parcoursOption.id === editForm.get('parcours')!.value?.id ? editForm.get('parcours')!.value : parcoursOption"
-              *ngFor="let parcoursOption of parcoursSharedCollection; trackBy: trackParcoursById"
-            >
-              {{ parcoursOption.id }}
-            </option>
-          </select>
+          <label class="form-control-label" for="field_label">Label</label>
+          <input type="text" class="form-control" name="label" id="field_label" data-cy="label" formControlName="label" />
+          <div *ngIf="editForm.get('label')!.invalid && (editForm.get('label')!.dirty || editForm.get('label')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('label')?.errors?.required"> This field is required. </small>
+          </div>
         </div>
       </div>
 

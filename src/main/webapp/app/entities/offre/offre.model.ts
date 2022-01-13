@@ -1,15 +1,13 @@
-import { IParcours } from 'app/entities/parcours/parcours.model';
-
 export interface IOffre {
-  id?: number;
+  id?: string;
   name?: string;
-  parcours?: IParcours | null;
+  label?: string;
 }
 
 export class Offre implements IOffre {
-  constructor(public id?: number, public name?: string, public parcours?: IParcours | null) {}
+  constructor(public id?: string, public name?: string, public label?: string) {}
 }
 
-export function getOffreIdentifier(offre: IOffre): number | undefined {
+export function getOffreIdentifier(offre: IOffre): string | undefined {
   return offre.id;
 }

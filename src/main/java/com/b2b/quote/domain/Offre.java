@@ -1,6 +1,5 @@
 package com.b2b.quote.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,32 +16,31 @@ public class Offre implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private String id;
 
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
-    @JsonIgnoreProperties(value = { "etapes", "offres", "parcours", "parent" }, allowSetters = true)
-    private Parcours parcours;
+    @NotNull
+    @Column(name = "label", nullable = false)
+    private String label;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public String getId() {
         return this.id;
     }
 
-    public Offre id(Long id) {
+    public Offre id(String id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -59,17 +57,17 @@ public class Offre implements Serializable {
         this.name = name;
     }
 
-    public Parcours getParcours() {
-        return this.parcours;
+    public String getLabel() {
+        return this.label;
     }
 
-    public void setParcours(Parcours parcours) {
-        this.parcours = parcours;
-    }
-
-    public Offre parcours(Parcours parcours) {
-        this.setParcours(parcours);
+    public Offre label(String label) {
+        this.setLabel(label);
         return this;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -97,6 +95,7 @@ public class Offre implements Serializable {
         return "Offre{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", label='" + getLabel() + "'" +
             "}";
     }
 }

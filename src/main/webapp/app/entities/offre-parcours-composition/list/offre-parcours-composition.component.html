@@ -1,0 +1,100 @@
+<div>
+  <h2 id="page-heading" data-cy="OffreParcoursCompositionHeading">
+    <span>Offre Parcours Compositions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadAll()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span>Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-offre-parcours-composition"
+        [routerLink]="['/offre-parcours-composition/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span> Create a new Offre Parcours Composition </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="offreParcoursCompositions?.length === 0">
+    <span>No offreParcoursCompositions found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="offreParcoursCompositions && offreParcoursCompositions.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr>
+          <th scope="col"><span>ID</span></th>
+          <th scope="col"><span>Start</span></th>
+          <th scope="col"><span>Offre</span></th>
+          <th scope="col"><span>Parcours Parent</span></th>
+          <th scope="col"><span>Parcours Child</span></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let offreParcoursComposition of offreParcoursCompositions; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/offre-parcours-composition', offreParcoursComposition.id, 'view']">{{ offreParcoursComposition.id }}</a>
+          </td>
+          <td>{{ offreParcoursComposition.start }}</td>
+          <td>
+            <div *ngIf="offreParcoursComposition.offre">
+              <a [routerLink]="['/offre', offreParcoursComposition.offre?.id, 'view']">{{ offreParcoursComposition.offre?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="offreParcoursComposition.parcoursParent">
+              <a [routerLink]="['/parcours-definition', offreParcoursComposition.parcoursParent?.id, 'view']">{{
+                offreParcoursComposition.parcoursParent?.id
+              }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="offreParcoursComposition.parcoursChild">
+              <a [routerLink]="['/parcours-definition', offreParcoursComposition.parcoursChild?.id, 'view']">{{
+                offreParcoursComposition.parcoursChild?.id
+              }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/offre-parcours-composition', offreParcoursComposition.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/offre-parcours-composition', offreParcoursComposition.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(offreParcoursComposition)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

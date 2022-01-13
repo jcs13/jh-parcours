@@ -56,7 +56,7 @@ public class EtapeResource {
         Etape result = etapeRepository.save(etape);
         return ResponseEntity
             .created(new URI("/api/etapes/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
     }
 
@@ -71,8 +71,10 @@ public class EtapeResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/etapes/{id}")
-    public ResponseEntity<Etape> updateEtape(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Etape etape)
-        throws URISyntaxException {
+    public ResponseEntity<Etape> updateEtape(
+        @PathVariable(value = "id", required = false) final String id,
+        @Valid @RequestBody Etape etape
+    ) throws URISyntaxException {
         log.debug("REST request to update Etape : {}, {}", id, etape);
         if (etape.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -88,7 +90,7 @@ public class EtapeResource {
         Etape result = etapeRepository.save(etape);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, etape.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, etape.getId()))
             .body(result);
     }
 
@@ -105,7 +107,7 @@ public class EtapeResource {
      */
     @PatchMapping(value = "/etapes/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Etape> partialUpdateEtape(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody Etape etape
     ) throws URISyntaxException {
         log.debug("REST request to partial update Etape partially : {}, {}", id, etape);
@@ -126,15 +128,18 @@ public class EtapeResource {
                 if (etape.getName() != null) {
                     existingEtape.setName(etape.getName());
                 }
+                if (etape.getLabel() != null) {
+                    existingEtape.setLabel(etape.getLabel());
+                }
+                if (etape.getDisplay() != null) {
+                    existingEtape.setDisplay(etape.getDisplay());
+                }
 
                 return existingEtape;
             })
             .map(etapeRepository::save);
 
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, etape.getId().toString())
-        );
+        return ResponseUtil.wrapOrNotFound(result, HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, etape.getId()));
     }
 
     /**
@@ -155,7 +160,7 @@ public class EtapeResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the etape, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/etapes/{id}")
-    public ResponseEntity<Etape> getEtape(@PathVariable Long id) {
+    public ResponseEntity<Etape> getEtape(@PathVariable String id) {
         log.debug("REST request to get Etape : {}", id);
         Optional<Etape> etape = etapeRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(etape);
@@ -168,12 +173,9 @@ public class EtapeResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/etapes/{id}")
-    public ResponseEntity<Void> deleteEtape(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEtape(@PathVariable String id) {
         log.debug("REST request to delete Etape : {}", id);
         etapeRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-            .build();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id)).build();
     }
 }

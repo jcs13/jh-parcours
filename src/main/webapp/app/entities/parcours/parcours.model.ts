@@ -1,26 +1,17 @@
 import { IEtape } from 'app/entities/etape/etape.model';
-import { IOffre } from 'app/entities/offre/offre.model';
 
 export interface IParcours {
-  id?: number;
+  id?: string;
   name?: string;
+  label?: string;
+  offreId?: string;
   etapes?: IEtape[] | null;
-  offres?: IOffre[] | null;
-  parcours?: IParcours[] | null;
-  parent?: IParcours | null;
 }
 
 export class Parcours implements IParcours {
-  constructor(
-    public id?: number,
-    public name?: string,
-    public etapes?: IEtape[] | null,
-    public offres?: IOffre[] | null,
-    public parcours?: IParcours[] | null,
-    public parent?: IParcours | null
-  ) {}
+  constructor(public id?: string, public name?: string, public label?: string, public offreId?: string, public etapes?: IEtape[] | null) {}
 }
 
-export function getParcoursIdentifier(parcours: IParcours): number | undefined {
+export function getParcoursIdentifier(parcours: IParcours): string | undefined {
   return parcours.id;
 }

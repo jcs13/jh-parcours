@@ -9,8 +9,7 @@ import com.b2b.quote.IntegrationTest;
 import com.b2b.quote.domain.Parcours;
 import com.b2b.quote.repository.ParcoursRepository;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,14 @@ class ParcoursResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
+    private static final String DEFAULT_LABEL = "AAAAAAAAAA";
+    private static final String UPDATED_LABEL = "BBBBBBBBBB";
+
+    private static final String DEFAULT_OFFRE_ID = "AAAAAAAAAA";
+    private static final String UPDATED_OFFRE_ID = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/parcours";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private ParcoursRepository parcoursRepository;
@@ -56,7 +58,7 @@ class ParcoursResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Parcours createEntity(EntityManager em) {
-        Parcours parcours = new Parcours().name(DEFAULT_NAME);
+        Parcours parcours = new Parcours().name(DEFAULT_NAME).label(DEFAULT_LABEL).offreId(DEFAULT_OFFRE_ID);
         return parcours;
     }
 
@@ -67,7 +69,7 @@ class ParcoursResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Parcours createUpdatedEntity(EntityManager em) {
-        Parcours parcours = new Parcours().name(UPDATED_NAME);
+        Parcours parcours = new Parcours().name(UPDATED_NAME).label(UPDATED_LABEL).offreId(UPDATED_OFFRE_ID);
         return parcours;
     }
 
@@ -90,13 +92,15 @@ class ParcoursResourceIT {
         assertThat(parcoursList).hasSize(databaseSizeBeforeCreate + 1);
         Parcours testParcours = parcoursList.get(parcoursList.size() - 1);
         assertThat(testParcours.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testParcours.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testParcours.getOffreId()).isEqualTo(DEFAULT_OFFRE_ID);
     }
 
     @Test
     @Transactional
     void createParcoursWithExistingId() throws Exception {
         // Create the Parcours with an existing ID
-        parcours.setId(1L);
+        parcours.setId("existing_id");
 
         int databaseSizeBeforeCreate = parcoursRepository.findAll().size();
 
@@ -129,8 +133,43 @@ class ParcoursResourceIT {
 
     @Test
     @Transactional
+    void checkLabelIsRequired() throws Exception {
+        int databaseSizeBeforeTest = parcoursRepository.findAll().size();
+        // set the field null
+        parcours.setLabel(null);
+
+        // Create the Parcours, which fails.
+
+        restParcoursMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(parcours)))
+            .andExpect(status().isBadRequest());
+
+        List<Parcours> parcoursList = parcoursRepository.findAll();
+        assertThat(parcoursList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkOffreIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = parcoursRepository.findAll().size();
+        // set the field null
+        parcours.setOffreId(null);
+
+        // Create the Parcours, which fails.
+
+        restParcoursMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(parcours)))
+            .andExpect(status().isBadRequest());
+
+        List<Parcours> parcoursList = parcoursRepository.findAll();
+        assertThat(parcoursList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllParcours() throws Exception {
         // Initialize the database
+        parcours.setId(UUID.randomUUID().toString());
         parcoursRepository.saveAndFlush(parcours);
 
         // Get all the parcoursList
@@ -138,14 +177,17 @@ class ParcoursResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(parcours.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(parcours.getId())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL)))
+            .andExpect(jsonPath("$.[*].offreId").value(hasItem(DEFAULT_OFFRE_ID)));
     }
 
     @Test
     @Transactional
     void getParcours() throws Exception {
         // Initialize the database
+        parcours.setId(UUID.randomUUID().toString());
         parcoursRepository.saveAndFlush(parcours);
 
         // Get the parcours
@@ -153,8 +195,10 @@ class ParcoursResourceIT {
             .perform(get(ENTITY_API_URL_ID, parcours.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(parcours.getId().intValue()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
+            .andExpect(jsonPath("$.id").value(parcours.getId()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+            .andExpect(jsonPath("$.label").value(DEFAULT_LABEL))
+            .andExpect(jsonPath("$.offreId").value(DEFAULT_OFFRE_ID));
     }
 
     @Test
@@ -168,6 +212,7 @@ class ParcoursResourceIT {
     @Transactional
     void putNewParcours() throws Exception {
         // Initialize the database
+        parcours.setId(UUID.randomUUID().toString());
         parcoursRepository.saveAndFlush(parcours);
 
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
@@ -176,7 +221,7 @@ class ParcoursResourceIT {
         Parcours updatedParcours = parcoursRepository.findById(parcours.getId()).get();
         // Disconnect from session so that the updates on updatedParcours are not directly saved in db
         em.detach(updatedParcours);
-        updatedParcours.name(UPDATED_NAME);
+        updatedParcours.name(UPDATED_NAME).label(UPDATED_LABEL).offreId(UPDATED_OFFRE_ID);
 
         restParcoursMockMvc
             .perform(
@@ -191,13 +236,15 @@ class ParcoursResourceIT {
         assertThat(parcoursList).hasSize(databaseSizeBeforeUpdate);
         Parcours testParcours = parcoursList.get(parcoursList.size() - 1);
         assertThat(testParcours.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testParcours.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testParcours.getOffreId()).isEqualTo(UPDATED_OFFRE_ID);
     }
 
     @Test
     @Transactional
     void putNonExistingParcours() throws Exception {
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
-        parcours.setId(count.incrementAndGet());
+        parcours.setId(UUID.randomUUID().toString());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restParcoursMockMvc
@@ -217,12 +264,12 @@ class ParcoursResourceIT {
     @Transactional
     void putWithIdMismatchParcours() throws Exception {
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
-        parcours.setId(count.incrementAndGet());
+        parcours.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restParcoursMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID().toString())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(parcours))
             )
@@ -237,7 +284,7 @@ class ParcoursResourceIT {
     @Transactional
     void putWithMissingIdPathParamParcours() throws Exception {
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
-        parcours.setId(count.incrementAndGet());
+        parcours.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restParcoursMockMvc
@@ -253,6 +300,7 @@ class ParcoursResourceIT {
     @Transactional
     void partialUpdateParcoursWithPatch() throws Exception {
         // Initialize the database
+        parcours.setId(UUID.randomUUID().toString());
         parcoursRepository.saveAndFlush(parcours);
 
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
@@ -261,7 +309,7 @@ class ParcoursResourceIT {
         Parcours partialUpdatedParcours = new Parcours();
         partialUpdatedParcours.setId(parcours.getId());
 
-        partialUpdatedParcours.name(UPDATED_NAME);
+        partialUpdatedParcours.name(UPDATED_NAME).label(UPDATED_LABEL).offreId(UPDATED_OFFRE_ID);
 
         restParcoursMockMvc
             .perform(
@@ -276,12 +324,15 @@ class ParcoursResourceIT {
         assertThat(parcoursList).hasSize(databaseSizeBeforeUpdate);
         Parcours testParcours = parcoursList.get(parcoursList.size() - 1);
         assertThat(testParcours.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testParcours.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testParcours.getOffreId()).isEqualTo(UPDATED_OFFRE_ID);
     }
 
     @Test
     @Transactional
     void fullUpdateParcoursWithPatch() throws Exception {
         // Initialize the database
+        parcours.setId(UUID.randomUUID().toString());
         parcoursRepository.saveAndFlush(parcours);
 
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
@@ -290,7 +341,7 @@ class ParcoursResourceIT {
         Parcours partialUpdatedParcours = new Parcours();
         partialUpdatedParcours.setId(parcours.getId());
 
-        partialUpdatedParcours.name(UPDATED_NAME);
+        partialUpdatedParcours.name(UPDATED_NAME).label(UPDATED_LABEL).offreId(UPDATED_OFFRE_ID);
 
         restParcoursMockMvc
             .perform(
@@ -305,13 +356,15 @@ class ParcoursResourceIT {
         assertThat(parcoursList).hasSize(databaseSizeBeforeUpdate);
         Parcours testParcours = parcoursList.get(parcoursList.size() - 1);
         assertThat(testParcours.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testParcours.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testParcours.getOffreId()).isEqualTo(UPDATED_OFFRE_ID);
     }
 
     @Test
     @Transactional
     void patchNonExistingParcours() throws Exception {
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
-        parcours.setId(count.incrementAndGet());
+        parcours.setId(UUID.randomUUID().toString());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restParcoursMockMvc
@@ -331,12 +384,12 @@ class ParcoursResourceIT {
     @Transactional
     void patchWithIdMismatchParcours() throws Exception {
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
-        parcours.setId(count.incrementAndGet());
+        parcours.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restParcoursMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID().toString())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(parcours))
             )
@@ -351,7 +404,7 @@ class ParcoursResourceIT {
     @Transactional
     void patchWithMissingIdPathParamParcours() throws Exception {
         int databaseSizeBeforeUpdate = parcoursRepository.findAll().size();
-        parcours.setId(count.incrementAndGet());
+        parcours.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restParcoursMockMvc
@@ -367,6 +420,7 @@ class ParcoursResourceIT {
     @Transactional
     void deleteParcours() throws Exception {
         // Initialize the database
+        parcours.setId(UUID.randomUUID().toString());
         parcoursRepository.saveAndFlush(parcours);
 
         int databaseSizeBeforeDelete = parcoursRepository.findAll().size();
