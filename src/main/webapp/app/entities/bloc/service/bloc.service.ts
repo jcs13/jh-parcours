@@ -21,14 +21,14 @@ export class BlocService {
   }
 
   update(bloc: IBloc): Observable<EntityResponseType> {
-    return this.http.put<IBloc>(`${this.resourceUrl}/${getBlocIdentifier(bloc) as number}`, bloc, { observe: 'response' });
+    return this.http.put<IBloc>(`${this.resourceUrl}/${getBlocIdentifier(bloc) as string}`, bloc, { observe: 'response' });
   }
 
   partialUpdate(bloc: IBloc): Observable<EntityResponseType> {
-    return this.http.patch<IBloc>(`${this.resourceUrl}/${getBlocIdentifier(bloc) as number}`, bloc, { observe: 'response' });
+    return this.http.patch<IBloc>(`${this.resourceUrl}/${getBlocIdentifier(bloc) as string}`, bloc, { observe: 'response' });
   }
 
-  find(id: number): Observable<EntityResponseType> {
+  find(id: string): Observable<EntityResponseType> {
     return this.http.get<IBloc>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
@@ -37,7 +37,7 @@ export class BlocService {
     return this.http.get<IBloc[]>(this.resourceUrl, { params: options, observe: 'response' });
   }
 
-  delete(id: number): Observable<HttpResponse<{}>> {
+  delete(id: string): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 

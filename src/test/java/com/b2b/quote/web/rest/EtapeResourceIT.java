@@ -9,8 +9,7 @@ import com.b2b.quote.IntegrationTest;
 import com.b2b.quote.domain.Etape;
 import com.b2b.quote.repository.EtapeRepository;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,14 @@ class EtapeResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
+    private static final String DEFAULT_LABEL = "AAAAAAAAAA";
+    private static final String UPDATED_LABEL = "BBBBBBBBBB";
+
+    private static final Boolean DEFAULT_DISPLAY = false;
+    private static final Boolean UPDATED_DISPLAY = true;
+
     private static final String ENTITY_API_URL = "/api/etapes";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private EtapeRepository etapeRepository;
@@ -56,7 +58,7 @@ class EtapeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Etape createEntity(EntityManager em) {
-        Etape etape = new Etape().name(DEFAULT_NAME);
+        Etape etape = new Etape().name(DEFAULT_NAME).label(DEFAULT_LABEL).display(DEFAULT_DISPLAY);
         return etape;
     }
 
@@ -67,7 +69,7 @@ class EtapeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Etape createUpdatedEntity(EntityManager em) {
-        Etape etape = new Etape().name(UPDATED_NAME);
+        Etape etape = new Etape().name(UPDATED_NAME).label(UPDATED_LABEL).display(UPDATED_DISPLAY);
         return etape;
     }
 
@@ -90,13 +92,15 @@ class EtapeResourceIT {
         assertThat(etapeList).hasSize(databaseSizeBeforeCreate + 1);
         Etape testEtape = etapeList.get(etapeList.size() - 1);
         assertThat(testEtape.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testEtape.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testEtape.getDisplay()).isEqualTo(DEFAULT_DISPLAY);
     }
 
     @Test
     @Transactional
     void createEtapeWithExistingId() throws Exception {
         // Create the Etape with an existing ID
-        etape.setId(1L);
+        etape.setId("existing_id");
 
         int databaseSizeBeforeCreate = etapeRepository.findAll().size();
 
@@ -129,8 +133,43 @@ class EtapeResourceIT {
 
     @Test
     @Transactional
+    void checkLabelIsRequired() throws Exception {
+        int databaseSizeBeforeTest = etapeRepository.findAll().size();
+        // set the field null
+        etape.setLabel(null);
+
+        // Create the Etape, which fails.
+
+        restEtapeMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(etape)))
+            .andExpect(status().isBadRequest());
+
+        List<Etape> etapeList = etapeRepository.findAll();
+        assertThat(etapeList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkDisplayIsRequired() throws Exception {
+        int databaseSizeBeforeTest = etapeRepository.findAll().size();
+        // set the field null
+        etape.setDisplay(null);
+
+        // Create the Etape, which fails.
+
+        restEtapeMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(etape)))
+            .andExpect(status().isBadRequest());
+
+        List<Etape> etapeList = etapeRepository.findAll();
+        assertThat(etapeList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllEtapes() throws Exception {
         // Initialize the database
+        etape.setId(UUID.randomUUID().toString());
         etapeRepository.saveAndFlush(etape);
 
         // Get all the etapeList
@@ -138,14 +177,17 @@ class EtapeResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(etape.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(etape.getId())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL)))
+            .andExpect(jsonPath("$.[*].display").value(hasItem(DEFAULT_DISPLAY.booleanValue())));
     }
 
     @Test
     @Transactional
     void getEtape() throws Exception {
         // Initialize the database
+        etape.setId(UUID.randomUUID().toString());
         etapeRepository.saveAndFlush(etape);
 
         // Get the etape
@@ -153,8 +195,10 @@ class EtapeResourceIT {
             .perform(get(ENTITY_API_URL_ID, etape.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(etape.getId().intValue()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
+            .andExpect(jsonPath("$.id").value(etape.getId()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+            .andExpect(jsonPath("$.label").value(DEFAULT_LABEL))
+            .andExpect(jsonPath("$.display").value(DEFAULT_DISPLAY.booleanValue()));
     }
 
     @Test
@@ -168,6 +212,7 @@ class EtapeResourceIT {
     @Transactional
     void putNewEtape() throws Exception {
         // Initialize the database
+        etape.setId(UUID.randomUUID().toString());
         etapeRepository.saveAndFlush(etape);
 
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
@@ -176,7 +221,7 @@ class EtapeResourceIT {
         Etape updatedEtape = etapeRepository.findById(etape.getId()).get();
         // Disconnect from session so that the updates on updatedEtape are not directly saved in db
         em.detach(updatedEtape);
-        updatedEtape.name(UPDATED_NAME);
+        updatedEtape.name(UPDATED_NAME).label(UPDATED_LABEL).display(UPDATED_DISPLAY);
 
         restEtapeMockMvc
             .perform(
@@ -191,13 +236,15 @@ class EtapeResourceIT {
         assertThat(etapeList).hasSize(databaseSizeBeforeUpdate);
         Etape testEtape = etapeList.get(etapeList.size() - 1);
         assertThat(testEtape.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testEtape.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testEtape.getDisplay()).isEqualTo(UPDATED_DISPLAY);
     }
 
     @Test
     @Transactional
     void putNonExistingEtape() throws Exception {
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
-        etape.setId(count.incrementAndGet());
+        etape.setId(UUID.randomUUID().toString());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEtapeMockMvc
@@ -217,12 +264,12 @@ class EtapeResourceIT {
     @Transactional
     void putWithIdMismatchEtape() throws Exception {
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
-        etape.setId(count.incrementAndGet());
+        etape.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEtapeMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID().toString())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(etape))
             )
@@ -237,7 +284,7 @@ class EtapeResourceIT {
     @Transactional
     void putWithMissingIdPathParamEtape() throws Exception {
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
-        etape.setId(count.incrementAndGet());
+        etape.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEtapeMockMvc
@@ -253,6 +300,7 @@ class EtapeResourceIT {
     @Transactional
     void partialUpdateEtapeWithPatch() throws Exception {
         // Initialize the database
+        etape.setId(UUID.randomUUID().toString());
         etapeRepository.saveAndFlush(etape);
 
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
@@ -260,6 +308,8 @@ class EtapeResourceIT {
         // Update the etape using partial update
         Etape partialUpdatedEtape = new Etape();
         partialUpdatedEtape.setId(etape.getId());
+
+        partialUpdatedEtape.display(UPDATED_DISPLAY);
 
         restEtapeMockMvc
             .perform(
@@ -274,12 +324,15 @@ class EtapeResourceIT {
         assertThat(etapeList).hasSize(databaseSizeBeforeUpdate);
         Etape testEtape = etapeList.get(etapeList.size() - 1);
         assertThat(testEtape.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testEtape.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testEtape.getDisplay()).isEqualTo(UPDATED_DISPLAY);
     }
 
     @Test
     @Transactional
     void fullUpdateEtapeWithPatch() throws Exception {
         // Initialize the database
+        etape.setId(UUID.randomUUID().toString());
         etapeRepository.saveAndFlush(etape);
 
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
@@ -288,7 +341,7 @@ class EtapeResourceIT {
         Etape partialUpdatedEtape = new Etape();
         partialUpdatedEtape.setId(etape.getId());
 
-        partialUpdatedEtape.name(UPDATED_NAME);
+        partialUpdatedEtape.name(UPDATED_NAME).label(UPDATED_LABEL).display(UPDATED_DISPLAY);
 
         restEtapeMockMvc
             .perform(
@@ -303,13 +356,15 @@ class EtapeResourceIT {
         assertThat(etapeList).hasSize(databaseSizeBeforeUpdate);
         Etape testEtape = etapeList.get(etapeList.size() - 1);
         assertThat(testEtape.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testEtape.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testEtape.getDisplay()).isEqualTo(UPDATED_DISPLAY);
     }
 
     @Test
     @Transactional
     void patchNonExistingEtape() throws Exception {
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
-        etape.setId(count.incrementAndGet());
+        etape.setId(UUID.randomUUID().toString());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEtapeMockMvc
@@ -329,12 +384,12 @@ class EtapeResourceIT {
     @Transactional
     void patchWithIdMismatchEtape() throws Exception {
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
-        etape.setId(count.incrementAndGet());
+        etape.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEtapeMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID().toString())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(etape))
             )
@@ -349,7 +404,7 @@ class EtapeResourceIT {
     @Transactional
     void patchWithMissingIdPathParamEtape() throws Exception {
         int databaseSizeBeforeUpdate = etapeRepository.findAll().size();
-        etape.setId(count.incrementAndGet());
+        etape.setId(UUID.randomUUID().toString());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEtapeMockMvc
@@ -365,6 +420,7 @@ class EtapeResourceIT {
     @Transactional
     void deleteEtape() throws Exception {
         // Initialize the database
+        etape.setId(UUID.randomUUID().toString());
         etapeRepository.saveAndFlush(etape);
 
         int databaseSizeBeforeDelete = etapeRepository.findAll().size();

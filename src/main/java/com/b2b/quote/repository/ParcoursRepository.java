@@ -9,4 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ParcoursRepository extends JpaRepository<Parcours, Long> {}
+public interface ParcoursRepository extends JpaRepository<Parcours, String> {}

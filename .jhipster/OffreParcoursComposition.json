@@ -1,0 +1,42 @@
+{
+  "name": "OffreParcoursComposition",
+  "fields": [
+    {
+      "fieldName": "start",
+      "fieldType": "Boolean"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "offre",
+      "otherEntityRelationshipName": "offreParcoursComposition",
+      "relationshipName": "offre",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "parcoursDefinition",
+      "otherEntityRelationshipName": "offreParcoursComposition",
+      "relationshipName": "parcoursParent",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "parcoursDefinition",
+      "otherEntityRelationshipName": "offreParcoursComposition",
+      "relationshipName": "parcoursChild",
+      "ownerSide": true
+    }
+  ],
+  "entityTableName": "offre_parcours_composition",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20220113174638"
+}

@@ -20,8 +20,10 @@ export class EtapeUpdateComponent implements OnInit {
   parcoursSharedCollection: IParcours[] = [];
 
   editForm = this.fb.group({
-    id: [],
+    id: [null, [Validators.required]],
     name: [null, [Validators.required]],
+    label: [null, [Validators.required]],
+    display: [null, [Validators.required]],
     parcours: [],
   });
 
@@ -54,7 +56,7 @@ export class EtapeUpdateComponent implements OnInit {
     }
   }
 
-  trackParcoursById(index: number, item: IParcours): number {
+  trackParcoursById(index: number, item: IParcours): string {
     return item.id!;
   }
 
@@ -81,6 +83,8 @@ export class EtapeUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: etape.id,
       name: etape.name,
+      label: etape.label,
+      display: etape.display,
       parcours: etape.parcours,
     });
 
@@ -104,6 +108,8 @@ export class EtapeUpdateComponent implements OnInit {
       ...new Etape(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
+      label: this.editForm.get(['label'])!.value,
+      display: this.editForm.get(['display'])!.value,
       parcours: this.editForm.get(['parcours'])!.value,
     };
   }

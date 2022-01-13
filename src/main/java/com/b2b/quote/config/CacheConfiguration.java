@@ -56,6 +56,14 @@ public class CacheConfiguration {
             createCache(cm, com.b2b.quote.domain.Etape.class.getName());
             createCache(cm, com.b2b.quote.domain.Etape.class.getName() + ".blocs");
             createCache(cm, com.b2b.quote.domain.Bloc.class.getName());
+            createCache(cm, com.b2b.quote.domain.BusinessUnit.class.getName());
+            createCache(cm, com.b2b.quote.domain.OffreParcoursComposition.class.getName());
+            createCache(cm, com.b2b.quote.domain.ParcoursDefinition.class.getName());
+            createCache(cm, com.b2b.quote.domain.ParcoursDefinition.class.getName() + ".etapeDefinitions");
+            createCache(cm, com.b2b.quote.domain.EtapeDefinition.class.getName());
+            createCache(cm, com.b2b.quote.domain.EtapeDefinition.class.getName() + ".blocDefinitions");
+            createCache(cm, com.b2b.quote.domain.BlocDefinition.class.getName());
+            createCache(cm, com.b2b.quote.domain.Element.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

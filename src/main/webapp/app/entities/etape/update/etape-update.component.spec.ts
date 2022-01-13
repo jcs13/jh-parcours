@@ -47,11 +47,11 @@ describe('Etape Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should call Parcours query and add missing value', () => {
-      const etape: IEtape = { id: 456 };
-      const parcours: IParcours = { id: 28521 };
+      const etape: IEtape = { id: 'CBA' };
+      const parcours: IParcours = { id: '4ca84692-fa51-4ff5-ac8c-4a4b8c9c50bb' };
       etape.parcours = parcours;
 
-      const parcoursCollection: IParcours[] = [{ id: 80301 }];
+      const parcoursCollection: IParcours[] = [{ id: 'c088a3b7-f71d-4086-9186-b311995ef17f' }];
       jest.spyOn(parcoursService, 'query').mockReturnValue(of(new HttpResponse({ body: parcoursCollection })));
       const additionalParcours = [parcours];
       const expectedCollection: IParcours[] = [...additionalParcours, ...parcoursCollection];
@@ -66,8 +66,8 @@ describe('Etape Management Update Component', () => {
     });
 
     it('Should update editForm', () => {
-      const etape: IEtape = { id: 456 };
-      const parcours: IParcours = { id: 68457 };
+      const etape: IEtape = { id: 'CBA' };
+      const parcours: IParcours = { id: 'f26a768c-77b5-4dbf-b707-7ee7d4ed5633' };
       etape.parcours = parcours;
 
       activatedRoute.data = of({ etape });
@@ -82,7 +82,7 @@ describe('Etape Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<Etape>>();
-      const etape = { id: 123 };
+      const etape = { id: 'ABC' };
       jest.spyOn(etapeService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ etape });
@@ -124,7 +124,7 @@ describe('Etape Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<Etape>>();
-      const etape = { id: 123 };
+      const etape = { id: 'ABC' };
       jest.spyOn(etapeService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ etape });
@@ -145,7 +145,7 @@ describe('Etape Management Update Component', () => {
   describe('Tracking relationships identifiers', () => {
     describe('trackParcoursById', () => {
       it('Should return tracked Parcours primary key', () => {
-        const entity = { id: 123 };
+        const entity = { id: 'ABC' };
         const trackResult = comp.trackParcoursById(0, entity);
         expect(trackResult).toEqual(entity.id);
       });

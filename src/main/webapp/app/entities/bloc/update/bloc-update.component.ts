@@ -20,9 +20,12 @@ export class BlocUpdateComponent implements OnInit {
   etapesSharedCollection: IEtape[] = [];
 
   editForm = this.fb.group({
-    id: [],
+    id: [null, [Validators.required]],
     name: [null, [Validators.required]],
-    componentId: [null, [Validators.required]],
+    label: [null, [Validators.required]],
+    elementName: [null, [Validators.required]],
+    elementPath: [null, [Validators.required]],
+    display: [null, [Validators.required]],
     etape: [],
   });
 
@@ -55,7 +58,7 @@ export class BlocUpdateComponent implements OnInit {
     }
   }
 
-  trackEtapeById(index: number, item: IEtape): number {
+  trackEtapeById(index: number, item: IEtape): string {
     return item.id!;
   }
 
@@ -82,7 +85,10 @@ export class BlocUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: bloc.id,
       name: bloc.name,
-      componentId: bloc.componentId,
+      label: bloc.label,
+      elementName: bloc.elementName,
+      elementPath: bloc.elementPath,
+      display: bloc.display,
       etape: bloc.etape,
     });
 
@@ -102,7 +108,10 @@ export class BlocUpdateComponent implements OnInit {
       ...new Bloc(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
-      componentId: this.editForm.get(['componentId'])!.value,
+      label: this.editForm.get(['label'])!.value,
+      elementName: this.editForm.get(['elementName'])!.value,
+      elementPath: this.editForm.get(['elementPath'])!.value,
+      display: this.editForm.get(['display'])!.value,
       etape: this.editForm.get(['etape'])!.value,
     };
   }

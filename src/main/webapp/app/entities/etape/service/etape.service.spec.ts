@@ -20,8 +20,10 @@ describe('Etape Service', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     elemDefault = {
-      id: 0,
+      id: 'AAAAAAA',
       name: 'AAAAAAA',
+      label: 'AAAAAAA',
+      display: false,
     };
   });
 
@@ -29,7 +31,7 @@ describe('Etape Service', () => {
     it('should find an element', () => {
       const returnedFromService = Object.assign({}, elemDefault);
 
-      service.find(123).subscribe(resp => (expectedResult = resp.body));
+      service.find('ABC').subscribe(resp => (expectedResult = resp.body));
 
       const req = httpMock.expectOne({ method: 'GET' });
       req.flush(returnedFromService);
@@ -39,7 +41,7 @@ describe('Etape Service', () => {
     it('should create a Etape', () => {
       const returnedFromService = Object.assign(
         {
-          id: 0,
+          id: 'ID',
         },
         elemDefault
       );
@@ -56,8 +58,10 @@ describe('Etape Service', () => {
     it('should update a Etape', () => {
       const returnedFromService = Object.assign(
         {
-          id: 1,
+          id: 'BBBBBB',
           name: 'BBBBBB',
+          label: 'BBBBBB',
+          display: true,
         },
         elemDefault
       );
@@ -75,6 +79,8 @@ describe('Etape Service', () => {
       const patchObject = Object.assign(
         {
           name: 'BBBBBB',
+          label: 'BBBBBB',
+          display: true,
         },
         new Etape()
       );
@@ -93,8 +99,10 @@ describe('Etape Service', () => {
     it('should return a list of Etape', () => {
       const returnedFromService = Object.assign(
         {
-          id: 1,
+          id: 'BBBBBB',
           name: 'BBBBBB',
+          label: 'BBBBBB',
+          display: true,
         },
         elemDefault
       );
@@ -110,7 +118,7 @@ describe('Etape Service', () => {
     });
 
     it('should delete a Etape', () => {
-      service.delete(123).subscribe(resp => (expectedResult = resp.ok));
+      service.delete('ABC').subscribe(resp => (expectedResult = resp.ok));
 
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
@@ -119,42 +127,42 @@ describe('Etape Service', () => {
 
     describe('addEtapeToCollectionIfMissing', () => {
       it('should add a Etape to an empty array', () => {
-        const etape: IEtape = { id: 123 };
+        const etape: IEtape = { id: 'ABC' };
         expectedResult = service.addEtapeToCollectionIfMissing([], etape);
         expect(expectedResult).toHaveLength(1);
         expect(expectedResult).toContain(etape);
       });
 
       it('should not add a Etape to an array that contains it', () => {
-        const etape: IEtape = { id: 123 };
+        const etape: IEtape = { id: 'ABC' };
         const etapeCollection: IEtape[] = [
           {
             ...etape,
           },
-          { id: 456 },
+          { id: 'CBA' },
         ];
         expectedResult = service.addEtapeToCollectionIfMissing(etapeCollection, etape);
         expect(expectedResult).toHaveLength(2);
       });
 
       it("should add a Etape to an array that doesn't contain it", () => {
-        const etape: IEtape = { id: 123 };
-        const etapeCollection: IEtape[] = [{ id: 456 }];
+        const etape: IEtape = { id: 'ABC' };
+        const etapeCollection: IEtape[] = [{ id: 'CBA' }];
         expectedResult = service.addEtapeToCollectionIfMissing(etapeCollection, etape);
         expect(expectedResult).toHaveLength(2);
         expect(expectedResult).toContain(etape);
       });
 
       it('should add only unique Etape to an array', () => {
-        const etapeArray: IEtape[] = [{ id: 123 }, { id: 456 }, { id: 76577 }];
-        const etapeCollection: IEtape[] = [{ id: 123 }];
+        const etapeArray: IEtape[] = [{ id: 'ABC' }, { id: 'CBA' }, { id: '502bd7fb-ec5e-44da-a87b-a881817947a7' }];
+        const etapeCollection: IEtape[] = [{ id: 'ABC' }];
         expectedResult = service.addEtapeToCollectionIfMissing(etapeCollection, ...etapeArray);
         expect(expectedResult).toHaveLength(3);
       });
 
       it('should accept varargs', () => {
-        const etape: IEtape = { id: 123 };
-        const etape2: IEtape = { id: 456 };
+        const etape: IEtape = { id: 'ABC' };
+        const etape2: IEtape = { id: 'CBA' };
         expectedResult = service.addEtapeToCollectionIfMissing([], etape, etape2);
         expect(expectedResult).toHaveLength(2);
         expect(expectedResult).toContain(etape);
@@ -162,14 +170,14 @@ describe('Etape Service', () => {
       });
 
       it('should accept null and undefined values', () => {
-        const etape: IEtape = { id: 123 };
+        const etape: IEtape = { id: 'ABC' };
         expectedResult = service.addEtapeToCollectionIfMissing([], null, etape, undefined);
         expect(expectedResult).toHaveLength(1);
         expect(expectedResult).toContain(etape);
       });
 
       it('should return initial array if no Etape is added', () => {
-        const etapeCollection: IEtape[] = [{ id: 123 }];
+        const etapeCollection: IEtape[] = [{ id: 'ABC' }];
         expectedResult = service.addEtapeToCollectionIfMissing(etapeCollection, undefined, null);
         expect(expectedResult).toEqual(etapeCollection);
       });
